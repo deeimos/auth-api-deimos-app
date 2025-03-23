@@ -1,0 +1,18 @@
+env: "dev"
+
+grpc:
+  port: 1000
+  timeout: 5s
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "password"
+  name: "mydb"
+  ssl_mode: "disable"
+
+access_ttl: 1h
+refresh_ttl: 168h
+access_secret: "your-access-secret"
+refresh_secret: "your-refresh-secret"

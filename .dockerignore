@@ -1,0 +1,28 @@
+# Golang
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Build artifacts
+auth-api
+migrator
+
+# Dependency directories
+/vendor/
+
+# Editor & system
+.idea/
+.vscode/
+*.log
+*.tmp
+.DS_Store
+
+# Configs
+config/local.yaml
+.env
+
+docker-compose.override.yml
