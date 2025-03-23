@@ -1,8 +1,10 @@
 FROM golang:1.24 AS builder
 
 WORKDIR /app
+
 COPY go.mod go.sum ./
 RUN go mod download
+
 COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o auth-api ./cmd/auth-api/main.go
@@ -12,10 +14,14 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/auth-api .
-COPY --from=builder /app/migrator .
+RUN apk add --no-cache ca-certificates netcat-openbsd
+
+COPY --from=builder /app/auth-api ./auth-api
+COPY --from=builder /app/migrator ./migrator
+COPY ./migrations ./migrations
 
 VOLUME /app/config
+
 EXPOSE 1000
 
 HEALTHCHECK \
