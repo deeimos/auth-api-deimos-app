@@ -1,1 +1,1 @@
-## Auth grps service
+## Auth grpc service
