@@ -23,13 +23,6 @@ func main() {
 	log.Info("Starting server", slog.String("env", config.Env))
 	log.Debug("debug messages enabled")
 
-	// if err := db.InitDB(config, log); err != nil {
-	// 	log.Error("Failed to connect to PostgreSQL", slog.String("error", err.Error()))
-	// 	os.Exit(1)
-	// }
-
-	// log.Info("PostgreSQL connection established")
-
 	application := app.New(log, *config)
 	go application.GRPCServer.Run()
 
