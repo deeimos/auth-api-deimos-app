@@ -4,8 +4,10 @@ import (
 	authgrpc "auth-api/internal/grpc/auth"
 	"fmt"
 	"log/slog"
-	"net"
+	"net/http"
 
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
@@ -37,20 +39,17 @@ func (app *App) run() error {
 	const op = "grpcApp.Run"
 
 	log := app.log.With(slog.String("op", op), slog.Int("port", app.port))
+	addr := fmt.Sprintf(":%d", app.port)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", app.port))
+	log.Info("gRPC (h2c) is running", slog.String("addr", addr))
 
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
+	h2s := &http2.Server{}
 
-	log.Info("gRPC is running", slog.String("addr", listener.Addr().String()))
+	handler := h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		app.gRPCServer.ServeHTTP(w, r)
+	}), h2s)
 
-	if err := app.gRPCServer.Serve(listener); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	return nil
+	return http.ListenAndServe(addr, handler)
 }
 
 func (app *App) Stop() {
